@@ -104,34 +104,34 @@ export default {
         })
 
         const addToCart = (item)=>{
-            checkLogged()
-            if(item.quantity>0){
-                let newData = {
-                    uid : item._id,
-                    id : item.id,
-                    quantity : 1,
-                    price : item.price,
-                    name : item.name
-                }
-                let found = false
-                cartData.value.forEach(cartItem =>{
-                    if(cartItem.id  == item.id){
-                        cartItem.quantity = cartItem.quantity + 1
-                        found = true
+            if(checkLogged()){
+                if(item.quantity>0){
+                    let newData = {
+                        uid : item._id,
+                        id : item.id,
+                        quantity : 1,
+                        price : item.price,
+                        name : item.name
                     }
-                })
-                if(!found){
-                    cartData.value.push(newData)
+                    let found = false
+                    cartData.value.forEach(cartItem =>{
+                        if(cartItem.id  == item.id){
+                            cartItem.quantity = cartItem.quantity + 1
+                            found = true
+                        }
+                    })
+                    if(!found){
+                        cartData.value.push(newData)
+                    }
+                    item.quantity = item.quantity-1
+                    sessionStorage.setItem('jft-cart',  JSON.stringify(cartData.value))
                 }
-                item.quantity = item.quantity-1
-                sessionStorage.setItem('jft-cart',  JSON.stringify(cartData.value))
             }
-            
         }
 
         const checkLogged = ()=>{
             if(checkUser()){
-
+                return true
             }else{
                 msg.value = "You need to be logged in First"
                 warning.value = true
