@@ -1,19 +1,27 @@
-# shopping-vue-app
+# MEVN---Food-Order-Frontend
 
-## Project setup
+## Dependencies
 ```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
+axios
+jsonwebtoken
+vue-router
 ```
 
-### Compiles and minifies for production
+### Authentication 
 ```
-npm run build
+JSON Web Token stored in Session Storage
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### Components
+```
+Warning - Show Custom Modal Information
+Spinner - Backup Spinner while data loads in background
+```
+
+### Static Components
+```
+Cart -> { require Authorization } = Show Invoice of added products [ JWT ]
+Home -> { No Authorization }      = List of all products
+Login / Signup                    = Authentication Purpose
+SellerDashboard                   = Backend for admin to add products
+```
