@@ -1,65 +1,75 @@
 <template>
 <!-- <Navbar/> -->
-<div v-if="warning">
-    <Warning  :msg="msg"/>
+<div class="view-body p-0 m-0">
+    <div v-if="warning">
+        <Warning  :msg="msg"/>
+    </div>
+    <div v-if="showCartComponent" class="overlay" id="dynamicHeight">
+        <Cart @showHome="showCartComponent=false" />
+    </div>
+    <!-- <div v-if="showCartComponent">
+        <Cart/>
+    </div> -->
+
+        <div class="container-fluid" >
+        <div class="container">
+            <div class="row mt-2 align-items-center">
+                <div class="col-2">
+                    <h5 class="brand color-primary">Grofers</h5>
+                </div>
+                <div class="col-lg-8 col-md-6 col-sm-4"></div>
+                <div class="col-lg-2 col-md-4 col-sm-6">
+                    <div v-if="isLoggedIn">
+                        <div class="row"> 
+                            <div class="col-6">
+                                <button class="btn btn-outline-success form-control" @click="showCart()">Cart </button>
+                            </div>
+                            <div class="col-6">
+                                <button class="btn btn-outline-danger form-control" @click="logout()">Log Out</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-else>
+                        <div class="row">
+                            <div class="col-12">
+                                <button class="btn btn-outline-success form-control" @click="showLogIn()">Log In</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="my-5" >
+        <div v-if="data.length>0" class="wrapper">
+            <div v-for="item in data" :key="item" class="product shadow p-3" :class="{ 'bg-sold-out': item.quantity<1 }">
+                <h5>Product Id - {{ item.id }}</h5>
+                <p>{{ item.name }}</p>
+                <img :src="item.image" alt="" class="img-fluid">
+                <div class="row mt-3 align-items-center">
+                    <div class="col-4">
+                        <button class=" btn btn-dark form-control">₹ {{ item.price}}</button>
+                    </div>
+                    <div class="col-4">
+                        <div v-if="item.quantity>5">
+                            <button class="btn btn-success form-control">{{ item.quantity }} left</button>
+                        </div>
+                        <div v-else-if="item.quantity>=1">
+                            <button class="btn btn-danger form-control">{{ item.quantity }} left</button>
+                        </div>
+                        <div v-else>
+                            <button class="btn btn-danger form-control">Sold Out</button>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <button class="btn btn-danger form-control" @click="addToCart(item)">Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-    <div class="container-fluid ">
-      <div class="container">
-          <div class="row mt-2 align-items-center">
-            <div class="col-2">
-                <h5 class="brand color-primary">Grofers</h5>
-            </div>
-            <div class="col-lg-8 col-md-6 col-sm-4"></div>
-            <div class="col-lg-2 col-md-4 col-sm-6">
-                <div v-if="isLoggedIn">
-                    <div class="row"> 
-                        <div class="col-6">
-                            <button class="btn btn-outline-success form-control" @click="showCart()">Cart </button>
-                        </div>
-                        <div class="col-6">
-                            <button class="btn btn-outline-danger form-control" @click="logout()">Log Out</button>
-                        </div>
-                    </div>
-                </div>
-                <div v-else>
-                    <div class="row">
-                        <div class="col-12">
-                            <button class="btn btn-outline-success form-control" @click="showLogIn()">Log In</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-      </div>
-  </div>
-  <div class="my-5">
-      <div v-if="data.length>0" class="wrapper">
-          <div v-for="item in data" :key="item" class="product shadow p-3" :class="{ 'bg-sold-out': item.quantity<1 }">
-              <h5>Product Id - {{ item.id }}</h5>
-              <p>{{ item.name }}</p>
-              <img :src="item.image" alt="" class="img-fluid">
-              <div class="row mt-3 align-items-center">
-                  <div class="col-4">
-                      <button class=" btn btn-dark form-control">Price - ₹ {{ item.price}}</button>
-                  </div>
-                  <div class="col-4">
-                      <div v-if="item.quantity>5">
-                          <button class="btn btn-success form-control">{{ item.quantity }} left</button>
-                      </div>
-                      <div v-else-if="item.quantity>=1">
-                          <button class="btn btn-danger form-control">{{ item.quantity }} left</button>
-                      </div>
-                      <div v-else>
-                          <button class="btn btn-danger form-control">Sold Out</button>
-                      </div>
-                  </div>
-                  <div class="col-4">
-                      <button class="btn btn-danger form-control" @click="addToCart(item)">Add to cart</button>
-                  </div>
-              </div>
-        </div>
-      </div>
-  </div>
+
 </template>
 
 <script>
@@ -67,13 +77,15 @@ import { ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import { checkUser } from '../composables/jwt.js'
 import Warning from '../components/Warning.vue'
+import Cart from '../components/Cart.vue'
 export default {
-    components : { Warning },
+    components : { Warning, Cart },
     setup(){
         const data = ref([])
         const router = useRouter()
         const cartData = ref([])
         const warning = ref(false)
+        const showCartComponent = ref(false)
         const msg = ref('')
         // Navbar Variables
         const isLoggedIn = ref(false)
@@ -94,14 +106,15 @@ export default {
                 isLoggedIn.value = false
             }
         })
+
         //Fetch All Available Products
         const fetchData = fetch('http://localhost:5000/products/')
-        .then(response => response.json())
-        .then(json => {
-            json.forEach(item=> {
-                data.value.push(item)
+            .then(response => response.json())
+            .then(json => {
+                json.forEach(item=> {
+                    data.value.push(item)
+                })
             })
-        })
 
         const addToCart = (item)=>{
             if(checkLogged()){
@@ -111,7 +124,8 @@ export default {
                         id : item.id,
                         quantity : 1,
                         price : item.price,
-                        name : item.name
+                        name : item.name,
+                        image : item.image
                     }
                     let found = false
                     cartData.value.forEach(cartItem =>{
@@ -143,10 +157,11 @@ export default {
         }
 
         const showCart = ()=>{
-            router.push({ name : 'Cart'})
+            // router.push({ name : 'Cart'})
+            showCartComponent.value = true
         }
 
-        return { data, addToCart, checkUser, cartData, isLoggedIn, showLogIn, logout, checkLogged, warning, msg, showCart }
+        return { data, addToCart, checkUser, cartData, isLoggedIn, showLogIn, logout, checkLogged, warning, msg, showCart, showCartComponent }
     }
 }
 </script>
@@ -164,9 +179,9 @@ template{
         grid-gap:2rem;
         justify-content: center;
     }
-    @media(max-width:1000px){
+    @media(max-width:1200px){
         .wrapper{
-            grid-template-columns: 50% 50%;
+            grid-template-columns: 45% 45%;
         }
     }
     @media(max-width:600px){
@@ -177,5 +192,14 @@ template{
     .btn:focus{
         outline: none;
         box-shadow: none;
+    }
+    .overlay{
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 10;
+        background-color: rgba(0, 0, 0, 0.7);
     }
 </style>

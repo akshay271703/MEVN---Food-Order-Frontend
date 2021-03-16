@@ -62,6 +62,7 @@ export default {
         }
 
         const customerLogin = ()=>{
+            console.log(process.env.BASE_URL)
             axios.post('http://localhost:5000/login', {
                 email: email.value,
                 password: password.value

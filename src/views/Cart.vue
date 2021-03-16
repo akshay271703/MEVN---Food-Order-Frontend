@@ -16,6 +16,10 @@
             <p>{{ item.quantity }}</p>
             <p>₹ {{ item.price * item.quantity }}</p>
         </div>
+        <div class="grid-2 my-4">
+            <h4>Total Payable Amount</h4>
+            <h4>₹ {{ payabeAmount }}</h4>
+        </div>
         <div class="text-end mt-3 mx-5">
             <button class="btn btn-warning me-3" @click="showHome()">Add More</button>
             <button class="btn btn-danger" @click="payNow()">Pay Now</button>
@@ -37,8 +41,10 @@ export default {
         const data = ref([])
         const router = useRouter()
         const res = JSON.parse(sessionStorage.getItem('jft-cart'))
+        const payabeAmount = ref(0)
         if(res){
             res.forEach(item=>{
+                payabeAmount.value = parseInt(payabeAmount.value) + parseInt(item.quantity * item.price)
                 data.value.push(item)
             })
         }
@@ -64,7 +70,7 @@ export default {
             router.push({ name : 'Home'})
             sessionStorage.removeItem('jft-cart')
         }
-        return { data, showHome, payNow }
+        return { data, showHome, payNow, payabeAmount }
     }
 }
 </script>
@@ -82,5 +88,9 @@ export default {
         display: flex;
         align-items: center;
         justify-content: center;
+    }
+    .grid-2{
+        display: grid;
+        grid-template-columns: 80% 20%;
     }
 </style>

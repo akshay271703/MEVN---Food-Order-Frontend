@@ -3,7 +3,7 @@
     <div class="mt-5">
         <form>
             <div class="form-group">
-
+                
             </div>
         </form>
     </div>
@@ -14,7 +14,7 @@ import axios from 'axios'
 export default {
     props : ['productID'],
     setup(){
-        axios.post('http://localhost:5000/products/one/')
+        
     }
 }
 </script>
