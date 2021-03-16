@@ -4,7 +4,7 @@
         <div class="biller">
             <div class="cart-header p-2">
                 <h6 class="mt-2">My Cart <span class="smallText"><small>({{ totalItems }} items )</small></span> </h6>
-                <button class="btn btn-dark" @click="$emit('showHome')">X</button>
+                <button class="btn btn-light py-0" @click="$emit('showHome')">X</button>
             </div>
             <div class="billing py-2 px-3">
                 <div class="row">
@@ -18,7 +18,7 @@
                 </div>
                 
             </div>
-            <div class="mt-2 p-2 space-between">
+            <div class="mt-2 p-2 space-between" id="cart-item-data">
                 <div v-if="data.length>0">
                     <div v-for="item in data" :key="item" >
                         <div class="row mb-2 bb-2 pb-2">
@@ -36,12 +36,13 @@
                     </div>
                 </div>
             </div>
+            <div class="text-end mx-5">
+                <button class="btn btn-warning me-3" @click="$emit('showHome')">Add More</button>
+                <button class="btn btn-danger" @click="payNow()">Pay Now</button>
+            </div>
         </div>
         
-        <div class="text-end mt-3 mx-5">
-            <button class="btn btn-warning me-3" @click="$emit('showHome')">Add More</button>
-            <button class="btn btn-danger" @click="payNow()">Pay Now</button>
-        </div>
+        
     </div>
 </div>
 
@@ -143,15 +144,15 @@ export default {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        height: 100%;
+        height: 150%;
         padding-bottom: 20px;
     }
     @keyframes slide {
         0%{
-            transform: translateX(100%);
+            transform: translateX(500px);
         }
         100%{
-            transform: translateX(0%);
+            transform: translateX(0);
         }
     }
     .cart-header{
@@ -179,5 +180,10 @@ export default {
         flex-direction: column;
         justify-content: space-between;
         height: 100%;
+    }
+    #cart-item-data{
+        overflow-y:scroll;
+        max-height: 500px;
+        overflow-x: hidden;
     }
 </style>

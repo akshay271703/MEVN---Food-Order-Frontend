@@ -15,14 +15,18 @@
         <div class="container">
             <div class="row mt-2 align-items-center">
                 <div class="col-2">
-                    <h5 class="brand color-primary">Grofers</h5>
+                    <h2>Grofers JFT</h2>
                 </div>
                 <div class="col-lg-8 col-md-6 col-sm-4"></div>
                 <div class="col-lg-2 col-md-4 col-sm-6">
                     <div v-if="isLoggedIn">
                         <div class="row"> 
                             <div class="col-6">
-                                <button class="btn btn-outline-success form-control" @click="showCart()">Cart </button>
+                                <button class="btn btn-dark form-control" @click="showCart()"><i class="fas fa-shopping-cart"></i></button>
+                                <div class="item-in-cart">
+                                    <p>{{ productsInCarts }}</p>
+                                </div>
+                                
                             </div>
                             <div class="col-6">
                                 <button class="btn btn-outline-danger form-control" @click="logout()">Log Out</button>
@@ -87,6 +91,7 @@ export default {
         const warning = ref(false)
         const showCartComponent = ref(false)
         const msg = ref('')
+        const productsInCarts = ref(0)
         // Navbar Variables
         const isLoggedIn = ref(false)
         const showLogIn = ()=>{
@@ -138,6 +143,7 @@ export default {
                         cartData.value.push(newData)
                     }
                     item.quantity = item.quantity-1
+                    productsInCarts.value = parseInt(productsInCarts.value) + 1
                     sessionStorage.setItem('jft-cart',  JSON.stringify(cartData.value))
                 }
             }
@@ -161,7 +167,7 @@ export default {
             showCartComponent.value = true
         }
 
-        return { data, addToCart, checkUser, cartData, isLoggedIn, showLogIn, logout, checkLogged, warning, msg, showCart, showCartComponent }
+        return { data, addToCart, checkUser, cartData, isLoggedIn, showLogIn, logout, checkLogged, warning, msg, showCart, showCartComponent, productsInCarts }
     }
 }
 </script>
@@ -201,5 +207,22 @@ template{
         left: 0;
         z-index: 10;
         background-color: rgba(0, 0, 0, 0.7);
+    }
+    .item-in-cart{
+        position: relative;
+        top: -60%;
+        left: 55%;
+        padding: 9px;
+        background-color: rgb(224, 108, 66);
+        color: white;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+    }
+    .item-in-cart p{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
     }
 </style>
